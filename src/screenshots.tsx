@@ -23,7 +23,7 @@ function WnrChrome({
 }) {
   void theme;
   return (
-    <div className="rounded-xl overflow-hidden border border-[var(--color-sand-2)] bg-[var(--color-parchment)] shadow-[0_10px_40px_-10px_rgba(25,23,18,0.22)] text-[10px] leading-[1.35]">
+    <div className="figure-content rounded-xl overflow-hidden border border-[var(--color-sand-2)] bg-[var(--color-parchment)] shadow-[0_10px_40px_-10px_rgba(25,23,18,0.22)] text-[10px] leading-[1.35]">
       {/* top bar */}
       <div className="flex items-center gap-2 px-3 py-2 bg-[var(--color-parchment)] border-b border-[var(--color-sand-2)]">
         <div className="w-6 h-6 rounded-md bg-[var(--color-ink)] text-white flex items-center justify-center font-serif font-bold text-[11px]">
@@ -449,7 +449,7 @@ export function WnrDashboardShot() {
 export function BwLinuxLabShot() {
   return (
     <div
-      className="rounded-xl overflow-hidden border border-[#1f2c31] shadow-[0_20px_60px_-20px_rgba(0,0,0,0.7)] text-[10px]"
+      className="figure-content rounded-xl overflow-hidden border border-[#1f2c31] shadow-[0_20px_60px_-20px_rgba(0,0,0,0.7)] text-[10px]"
       style={{
         background:
           "radial-gradient(120% 80% at 50% 0%, rgba(94,224,213,0.07), transparent 60%), linear-gradient(180deg, #0a1418 0%, #0e1214 100%)",
