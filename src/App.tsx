@@ -40,6 +40,7 @@ import {
   Radio,
   Lightbulb,
   PanelTopOpen,
+  Palette,
 } from "lucide-react";
 import { cn } from "./utils/cn";
 import { getT, type Lang, type T } from "./i18n";
@@ -317,13 +318,35 @@ function Divider({
  *  APP
  * ============================================================ */
 
+export type Theme = "classic" | "mono";
+
 const TOTAL_SLIDES = 35;
 const TOTAL_MINUTES = 30;
 
 export default function App() {
   const [lang, setLang] = useState<Lang>("en");
+  const [theme, setTheme] = useState<Theme>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const saved = localStorage.getItem("presentation_theme");
+        if (saved === "mono" || saved === "classic") return saved;
+      } catch {
+        // ignore storage errors
+      }
+    }
+    return "classic";
+  });
   const [slide, setSlide] = useState(0);
   const [showIntro, setShowIntro] = useState(true);
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    try {
+      localStorage.setItem("presentation_theme", theme);
+    } catch {
+      // ignore
+    }
+  }, [theme]);
 
   const t = useMemo(() => getT(lang), [lang]);
 
@@ -373,6 +396,8 @@ export default function App() {
         setShowIntro(true);
       } else if (e.key === "g" || e.key === "G") {
         setLang((l) => (l === "en" ? "el" : "en"));
+      } else if (e.key === "t" || e.key === "T") {
+        setTheme((curr) => (curr === "classic" ? "mono" : "classic"));
       }
     };
     window.addEventListener("keydown", onKey);
@@ -383,12 +408,15 @@ export default function App() {
   const minute = minuteMap[slide] ?? 0;
 
   return (
-    <div lang={lang} className="relative w-full min-h-screen bg-[var(--color-parchment)] text-[var(--color-ink)]">
+    <div lang={lang} data-theme={theme} className="relative w-full min-h-screen bg-[var(--color-parchment)] text-[var(--color-ink)]">
       {/* Top chrome */}
       <header className="fixed top-0 inset-x-0 z-50 backdrop-blur bg-[var(--color-parchment)]/85 border-b border-[var(--color-sand-2)]">
         <div className="flex items-center justify-between px-5 md:px-10 py-3 gap-4">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="w-9 h-9 rounded-full bg-[var(--color-ink)] text-[var(--color-parchment)] flex items-center justify-center font-serif font-bold flex-shrink-0">
+            <div className={cn(
+              "w-9 h-9 rounded-full flex items-center justify-center font-serif font-bold flex-shrink-0 transition",
+              theme === "mono" ? "bg-black text-white" : "bg-[var(--color-ink)] text-[var(--color-parchment)]"
+            )}>
               W
             </div>
             <div className="leading-tight hidden sm:block">
@@ -402,10 +430,28 @@ export default function App() {
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <button
+              onClick={() => setTheme((th) => (th === "classic" ? "mono" : "classic"))}
+              className={cn(
+                "inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-widest px-3 py-1.5 rounded-full border transition",
+                theme === "mono"
+                  ? "bg-black text-white font-bold border-black hover:bg-neutral-800"
+                  : "border-[var(--color-sand-2)] hover:bg-[var(--color-sand)] text-[var(--color-ink)]"
+              )}
+              title="Swap theme: Classic ↔ Mono (T)"
+            >
+              <Palette className="w-3.5 h-3.5" />
+              <span>{theme === "classic" ? "Classic" : "Mono"}</span>
+            </button>
             <button
               onClick={() => setLang(lang === "en" ? "el" : "en")}
-              className="hidden sm:inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-widest px-3 py-1.5 rounded-full border border-[var(--color-sand-2)] hover:bg-[var(--color-sand)] transition"
+              className={cn(
+                "hidden sm:inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-widest px-3 py-1.5 rounded-full border transition",
+                theme === "mono"
+                  ? "bg-black text-white font-bold border-black hover:bg-neutral-800"
+                  : "border-[var(--color-sand-2)] hover:bg-[var(--color-sand)] text-[var(--color-ink)]"
+              )}
               title="Toggle language (G)"
             >
               <Languages className="w-3.5 h-3.5" />
@@ -414,7 +460,13 @@ export default function App() {
             </button>
             <button
               onClick={() => setLang(lang === "en" ? "el" : "en")}
-              className="sm:hidden inline-flex items-center justify-center w-9 h-9 rounded-full border border-[var(--color-sand-2)]"
+              className={cn(
+                "sm:hidden inline-flex items-center justify-center w-9 h-9 rounded-full border transition",
+                theme === "mono"
+                  ? "bg-black text-white font-bold border-black hover:bg-neutral-800"
+                  : "border-[var(--color-sand-2)] text-[var(--color-ink)]"
+              )}
+              title="Toggle language (G)"
             >
               <Languages className="w-4 h-4" />
             </button>
@@ -440,7 +492,15 @@ export default function App() {
 
       <main className="pt-16 pb-20">
         {showIntro ? (
-          <Intro t={t} lang={lang} onStart={() => go(0)} onJump={go} onLang={setLang} />
+          <Intro
+            t={t}
+            lang={lang}
+            theme={theme}
+            onStart={() => go(0)}
+            onJump={go}
+            onLang={setLang}
+            onToggleTheme={() => setTheme((th) => (th === "classic" ? "mono" : "classic"))}
+          />
         ) : (
           <SlideDeck slide={slide} t={t} lang={lang} />
         )}
@@ -452,7 +512,12 @@ export default function App() {
             <button
               onClick={() => go(slide - 1)}
               disabled={slide === 0}
-              className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-[var(--color-sand-2)] hover:bg-[var(--color-sand)] disabled:opacity-40 disabled:cursor-not-allowed text-sm font-medium transition"
+              className={cn(
+                "inline-flex items-center gap-2 px-3 py-2 rounded-lg border text-sm transition disabled:opacity-40 disabled:cursor-not-allowed",
+                theme === "mono"
+                  ? "bg-black text-white font-bold border-black hover:bg-neutral-800 disabled:hover:bg-black"
+                  : "border-[var(--color-sand-2)] hover:bg-[var(--color-sand)] font-medium"
+              )}
             >
               <ArrowLeft className="w-4 h-4" />
               <span className="hidden sm:inline">{t.nav.prev}</span>
@@ -460,7 +525,10 @@ export default function App() {
             <div className="flex items-center gap-2 text-xs font-mono text-[var(--color-ink-muted)]">
               <button
                 onClick={() => setShowIntro(true)}
-                className="hover:text-[var(--color-ink)] transition uppercase tracking-widest"
+                className={cn(
+                  "transition uppercase tracking-widest text-xs font-mono",
+                  theme === "mono" ? "font-bold text-black hover:underline" : "hover:text-[var(--color-ink)]"
+                )}
               >
                 {lang === "en" ? "Agenda" : "Ατζέντα"}
               </button>
@@ -468,7 +536,12 @@ export default function App() {
             <button
               onClick={() => go(slide + 1)}
               disabled={slide === TOTAL_SLIDES - 1}
-              className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--color-ink)] text-[var(--color-parchment)] hover:bg-[var(--color-ink-soft)] disabled:opacity-40 disabled:cursor-not-allowed text-sm font-medium transition"
+              className={cn(
+                "inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition disabled:opacity-40 disabled:cursor-not-allowed",
+                theme === "mono"
+                  ? "bg-black text-white font-bold border border-black hover:bg-neutral-800 disabled:hover:bg-black"
+                  : "bg-[var(--color-ink)] text-[var(--color-parchment)] hover:bg-[var(--color-ink-soft)] font-medium"
+              )}
             >
               <span className="hidden sm:inline">{t.nav.next}</span>
               <ArrowRight className="w-4 h-4" />
@@ -487,15 +560,19 @@ export default function App() {
 function Intro({
   t,
   lang,
+  theme,
   onStart,
   onJump,
   onLang,
+  onToggleTheme,
 }: {
   t: T;
   lang: Lang;
+  theme: Theme;
   onStart: () => void;
   onJump: (n: number) => void;
   onLang: (l: Lang) => void;
+  onToggleTheme: () => void;
 }) {
   const sections = [
     { n: "01", title: t.sections[0].title, min: t.sections[0].min, slide: 4, Icon: Flag },
@@ -516,10 +593,28 @@ function Intro({
             <Eyebrow>{t.cover.eyebrow}</Eyebrow>
             <button
               onClick={() => onLang(lang === "en" ? "el" : "en")}
-              className="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-widest text-[var(--color-ink-muted)] border border-[var(--color-sand-2)] px-2.5 py-1 rounded-md hover:bg-[var(--color-sand)] transition"
+              className={cn(
+                "inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-widest border px-2.5 py-1 rounded-md transition",
+                theme === "mono"
+                  ? "bg-black text-white font-bold border-black hover:bg-neutral-800"
+                  : "text-[var(--color-ink-muted)] border-[var(--color-sand-2)] hover:bg-[var(--color-sand)]"
+              )}
             >
               <Languages className="w-3.5 h-3.5" />
               {lang === "en" ? "EN → EL" : "EL → EN"}
+            </button>
+            <button
+              onClick={onToggleTheme}
+              className={cn(
+                "inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-widest border px-2.5 py-1 rounded-md transition",
+                theme === "mono"
+                  ? "bg-black text-white font-bold border-black hover:bg-neutral-800"
+                  : "text-[var(--color-ink-muted)] border-[var(--color-sand-2)] hover:bg-[var(--color-sand)]"
+              )}
+              title="Swap theme (T)"
+            >
+              <Palette className="w-3.5 h-3.5" />
+              {theme === "classic" ? "Theme: Classic → Mono" : "Theme: Mono → Classic"}
             </button>
           </div>
           <Serif as="h1" className="text-5xl md:text-7xl leading-[0.95] mb-5">
@@ -546,7 +641,10 @@ function Intro({
             {t.cover.abstract}
           </p>
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-12 h-12 rounded-full bg-[var(--color-ink)] text-[var(--color-parchment)] flex items-center justify-center">
+            <div className={cn(
+              "w-12 h-12 rounded-full flex items-center justify-center transition",
+              theme === "mono" ? "bg-black text-white" : "bg-[var(--color-ink)] text-[var(--color-parchment)]"
+            )}>
               <Mic className="w-5 h-5" />
             </div>
             <div>
@@ -561,14 +659,24 @@ function Intro({
           <div className="flex flex-wrap gap-3">
             <button
               onClick={onStart}
-              className="group inline-flex items-center gap-2 bg-[var(--color-ink)] text-[var(--color-parchment)] px-6 py-3 rounded-full font-medium hover:bg-[var(--color-ink-soft)] transition"
+              className={cn(
+                "group inline-flex items-center gap-2 px-6 py-3 rounded-full font-medium transition",
+                theme === "mono"
+                  ? "bg-black text-white font-bold hover:bg-neutral-800 shadow-md"
+                  : "bg-[var(--color-ink)] text-[var(--color-parchment)] hover:bg-[var(--color-ink-soft)]"
+              )}
             >
               {t.cover.begin}
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </button>
             <button
               onClick={() => onJump(34)}
-              className="inline-flex items-center gap-2 border border-[var(--color-sand-2)] bg-white/70 px-5 py-3 rounded-full font-medium hover:bg-[var(--color-sand)] transition"
+              className={cn(
+                "inline-flex items-center gap-2 px-5 py-3 rounded-full font-medium transition",
+                theme === "mono"
+                  ? "bg-black text-white font-bold border border-black hover:bg-neutral-800 shadow-md"
+                  : "border border-[var(--color-sand-2)] bg-white/70 hover:bg-[var(--color-sand)]"
+              )}
             >
               {t.cover.qa}
             </button>
@@ -604,16 +712,16 @@ function Intro({
           {lang === "en" ? (
             <>
               Tip: use{" "}
-              <kbd className="px-1.5 py-0.5 bg-[var(--color-sand)] rounded border border-[var(--color-sand-2)]">←</kbd>{" "}
-              <kbd className="px-1.5 py-0.5 bg-[var(--color-sand)] rounded border border-[var(--color-sand-2)]">→</kbd>{" "}
-              or click a chapter · press <kbd className="px-1.5 py-0.5 bg-[var(--color-sand)] rounded border border-[var(--color-sand-2)]">G</kbd> for Greek
+              <kbd className={cn("px-1.5 py-0.5 rounded border", theme === "mono" ? "bg-black text-white border-black font-bold" : "bg-[var(--color-sand)] border-[var(--color-sand-2)]")}>←</kbd>{" "}
+              <kbd className={cn("px-1.5 py-0.5 rounded border", theme === "mono" ? "bg-black text-white border-black font-bold" : "bg-[var(--color-sand)] border-[var(--color-sand-2)]")}>→</kbd>{" "}
+              or click a chapter · <kbd className={cn("px-1.5 py-0.5 rounded border", theme === "mono" ? "bg-black text-white border-black font-bold" : "bg-[var(--color-sand)] border-[var(--color-sand-2)]")}>G</kbd> language · <kbd className={cn("px-1.5 py-0.5 rounded border", theme === "mono" ? "bg-black text-white border-black font-bold" : "bg-[var(--color-sand)] border-[var(--color-sand-2)]")}>T</kbd> theme
             </>
           ) : (
             <>
               Χρήση:{" "}
-              <kbd className="px-1.5 py-0.5 bg-[var(--color-sand)] rounded border border-[var(--color-sand-2)]">←</kbd>{" "}
-              <kbd className="px-1.5 py-0.5 bg-[var(--color-sand)] rounded border border-[var(--color-sand-2)]">→</kbd>{" "}
-              ή κλικ σε κεφάλαιο · <kbd className="px-1.5 py-0.5 bg-[var(--color-sand)] rounded border border-[var(--color-sand-2)]">G</kbd> για Αγγλικά
+              <kbd className={cn("px-1.5 py-0.5 rounded border", theme === "mono" ? "bg-black text-white border-black font-bold" : "bg-[var(--color-sand)] border-[var(--color-sand-2)]")}>←</kbd>{" "}
+              <kbd className={cn("px-1.5 py-0.5 rounded border", theme === "mono" ? "bg-black text-white border-black font-bold" : "bg-[var(--color-sand)] border-[var(--color-sand-2)]")}>→</kbd>{" "}
+              ή κλικ σε κεφάλαιο · <kbd className={cn("px-1.5 py-0.5 rounded border", theme === "mono" ? "bg-black text-white border-black font-bold" : "bg-[var(--color-sand)] border-[var(--color-sand-2)]")}>G</kbd> γλώσσα · <kbd className={cn("px-1.5 py-0.5 rounded border", theme === "mono" ? "bg-black text-white border-black font-bold" : "bg-[var(--color-sand)] border-[var(--color-sand-2)]")}>T</kbd> θέμα
             </>
           )}
         </div>
@@ -626,14 +734,26 @@ function Intro({
             <button
               key={s.n}
               onClick={() => onJump(s.slide)}
-              className="group flex items-center gap-4 text-left ink-card p-4 hover:border-[var(--color-terracotta-light)] hover:-translate-y-0.5 transition-all"
+              className={cn(
+                "group flex items-center gap-4 text-left ink-card p-4 transition-all",
+                theme === "mono"
+                  ? "hover:border-black hover:-translate-y-0.5"
+                  : "hover:border-[var(--color-terracotta-light)] hover:-translate-y-0.5"
+              )}
             >
-              <div className="w-12 h-12 rounded-lg bg-[var(--color-sand)] flex items-center justify-center text-[var(--color-terracotta-deep)] group-hover:bg-[var(--color-terracotta)] group-hover:text-white transition">
+              <div
+                className={cn(
+                  "w-12 h-12 rounded-lg flex items-center justify-center transition",
+                  theme === "mono"
+                    ? "bg-black text-white group-hover:bg-neutral-800"
+                    : "bg-[var(--color-sand)] text-[var(--color-terracotta-deep)] group-hover:bg-[var(--color-terracotta)] group-hover:text-white"
+                )}
+              >
                 <Icon className="w-5 h-5" />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <span className="font-mono text-[10px] text-[var(--color-terracotta-deep)]">
+                  <span className={cn("font-mono text-[10px]", theme === "mono" ? "text-black font-bold" : "text-[var(--color-terracotta-deep)]")}>
                     {s.n}
                   </span>
                   <span className="text-xs font-mono text-[var(--color-ink-muted)]">
@@ -644,7 +764,10 @@ function Intro({
                   {s.title}
                 </div>
               </div>
-              <ArrowRight className="w-4 h-4 text-[var(--color-ink-muted)] group-hover:text-[var(--color-terracotta-deep)] group-hover:translate-x-1 transition flex-shrink-0" />
+              <ArrowRight className={cn(
+                "w-4 h-4 transition flex-shrink-0 group-hover:translate-x-1",
+                theme === "mono" ? "text-black" : "text-[var(--color-ink-muted)] group-hover:text-[var(--color-terracotta-deep)]"
+              )} />
             </button>
           );
         })}
@@ -2351,7 +2474,7 @@ function SlideWnrTour({ t }: { t: T }) {
         The warm editorial <span className="italic text-[var(--color-terracotta-deep)]">home</span> of the platform.
       </Serif>
       <p className="max-w-3xl text-[var(--color-ink-soft)] leading-relaxed mb-5 text-sm">
-        The landing page sets the tone: a Newsreader-serif headline over a warm parchment background,
+        The landing page sets the tone: an authoritative editorial headline over an inviting background,
         a live stateful terminal preview on the right, and quiet cards for participants and educators.
         Below the fold, a live cohort activity feed, badges and leaderboard establish presence.
       </p>

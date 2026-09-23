@@ -8,8 +8,10 @@ Built with React + Vite + Tailwind CSS and compiled to **one self-contained `ind
 
 ## ✨ Features
 
+- **Theme Swapping (Classic ↔ Mono)** — switch with one click (or press `T`). Includes the warm Classic editorial theme and a crisp Mono theme (pure white background, bold black letters, bold black buttons, figures and illustrations preserved in their original colors).
 - **Bilingual** — full EN / EL translations with a one-click toggle (or press `G`).
-- **Single-file build** — `vite-plugin-singlefile` inlines everything into `dist/index.html`; no external assets required.
+- **Research Typography** — IBM Plex superfamily (`IBM Plex Sans`, `IBM Plex Serif`, `IBM Plex Mono`) with a 100% self-contained offline system stack (no external font tracking or network links).
+- **Single-file build** — `vite-plugin-singlefile` inlines everything into `dist/index.html` and automatically copies to `html/index.html` (and `/html/index.html`); no external assets required.
 - **8 narrative chapters** with an agenda, timed sections, keyboard navigation and a Q&A jump.
 - **Custom inline artwork** — all illustration assets are embedded as code (no image files needed).
 
@@ -37,14 +39,14 @@ npm ci
 # Development server (http://localhost:5173)
 npm run dev
 
-# Production build → dist/index.html (unified single file)
+# Production build → dist/index.html & html/index.html (unified single file)
 npm run build
 
 # Preview the production build locally
 npm run preview
 ```
 
-After `npm run build`, the entire presentation lives in **`dist/index.html`** — just open it in a browser or copy it anywhere.
+After `npm run build`, the entire presentation lives in **`dist/index.html`** and **`html/index.html`** (as well as `/html/index.html`) — just open it in any browser or copy it anywhere.
 
 ## ⌨️ Keyboard shortcuts
 
@@ -56,6 +58,7 @@ After `npm run build`, the entire presentation lives in **`dist/index.html`** �
 | `End` | Last slide (Q&A) |
 | `Esc` | Toggle agenda overlay |
 | `G` | Toggle language (EN ↔ EL) |
+| `T` | Toggle theme (Classic ↔ Mono) |
 
 ## 🗂️ Project structure
 

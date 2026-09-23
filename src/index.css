@@ -19,9 +19,69 @@
   --color-cyber-cyan: #5EE0D5;
   --color-cyber-magenta: #E05EBF;
 
-  --font-serif: "Newsreader", "Georgia", "Times New Roman", serif;
-  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --font-serif: "IBM Plex Serif", "Georgia", "Cambria", "Times New Roman", serif;
+  --font-sans: "IBM Plex Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+}
+
+:root,
+[data-theme="classic"] {
+  --color-parchment: #FBF7F0;
+  --color-parchment-2: #FAF6EE;
+  --color-sand: #F3EFE6;
+  --color-sand-2: #EDE8DC;
+  --color-ink: #191712;
+  --color-ink-soft: #2A2723;
+  --color-ink-muted: #5C564A;
+  --color-terracotta: #C7664B;
+  --color-terracotta-deep: #B8563C;
+  --color-terracotta-soft: #D97757;
+  --color-terracotta-light: #E8A890;
+  --color-moss: #4A6B3E;
+  --color-gold: #B08D45;
+  --color-cyber-dark: #0E1214;
+  --color-cyber-panel: #14191C;
+  --color-cyber-cyan: #5EE0D5;
+  --color-cyber-magenta: #E05EBF;
+}
+
+/* Mono theme: pure white background, black letters, bold black buttons, figures keep authentic styling */
+[data-theme="mono"] {
+  --color-parchment: #FFFFFF;
+  --color-parchment-2: #F9FAFB;
+  --color-sand: #F4F4F5;
+  --color-sand-2: #E4E4E7;
+  --color-ink: #000000;
+  --color-ink-soft: #111111;
+  --color-ink-muted: #52525B;
+  --color-terracotta: #000000;
+  --color-terracotta-deep: #000000;
+  --color-terracotta-soft: #27272A;
+  --color-terracotta-light: #71717A;
+  /* Figures, charts, mockups and technical panels keep their original colors */
+  --color-moss: #4A6B3E;
+  --color-gold: #B08D45;
+  --color-cyber-dark: #0E1214;
+  --color-cyber-panel: #14191C;
+  --color-cyber-cyan: #5EE0D5;
+  --color-cyber-magenta: #E05EBF;
+}
+
+/* Insulate mockups and figure elements so figures remain as they are */
+.figure-content {
+  --color-parchment: #FBF7F0;
+  --color-parchment-2: #FAF6EE;
+  --color-sand: #F3EFE6;
+  --color-sand-2: #EDE8DC;
+  --color-ink: #191712;
+  --color-ink-soft: #2A2723;
+  --color-ink-muted: #5C564A;
+  --color-terracotta: #C7664B;
+  --color-terracotta-deep: #B8563C;
+  --color-terracotta-soft: #D97757;
+  --color-terracotta-light: #E8A890;
+  --color-moss: #4A6B3E;
+  --color-gold: #B08D45;
 }
 
 html, body, #root {
@@ -64,6 +124,11 @@ html, body, #root {
     radial-gradient(circle at 80% 70%, rgba(176, 141, 69, 0.03) 0px, transparent 40%);
 }
 
+[data-theme="mono"] .paper-grain {
+  background-image: none !important;
+  background-color: #FFFFFF !important;
+}
+
 /* Red ink stamp */
 .stamp {
   border: 3px solid var(--color-terracotta);
@@ -78,6 +143,30 @@ html, body, #root {
   text-transform: uppercase;
   font-size: 0.8rem;
   box-shadow: inset 0 0 0 1px rgba(199,102,75,0.15);
+}
+
+[data-theme="mono"] .stamp {
+  border-color: #000000 !important;
+  color: #000000 !important;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2) !important;
+}
+
+[data-theme="mono"] .dropcap::first-letter {
+  color: #000000 !important;
+}
+
+[data-theme="mono"] .pullquote {
+  border-left-color: #000000 !important;
+  color: #000000 !important;
+}
+
+[data-theme="mono"] .cursor-blink::after {
+  color: #000000 !important;
+}
+
+/* Mono theme buttons styling */
+[data-theme="mono"] button:not(.figure-content button) {
+  font-weight: 700;
 }
 
 /* A subtle progress bar */
@@ -144,6 +233,12 @@ html, body, #root {
   border-radius: 12px;
   box-shadow: 0 1px 2px rgba(25, 23, 18, 0.04), 0 8px 24px -12px rgba(25, 23, 18, 0.08);
 }
+[data-theme="mono"] .ink-card {
+  background: #FFFFFF;
+  border-color: #E5E7EB;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
 .dark-card {
   background: var(--color-cyber-panel);
   color: #E8E6E0;
