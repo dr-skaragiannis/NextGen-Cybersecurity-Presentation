@@ -364,7 +364,7 @@ const en: T = {
       "How gamification, agentic AI and digital twins are reshaping the way the next generation of defenders learns to fight — without ever breaking production.",
     speakerLabel: "Speaker",
     speakerName: "Stylianos Karagiannis",
-    speakerAffil: "Adjunct Lecturer · Researcher · NMSLab",
+    speakerAffil: "Post-Doctoral Researcher · NMSLab",
     missionLabel: "Mission",
     missionValue: "Train like it's real.",
     missionSub: "Break nothing. Learn everything.",
@@ -392,7 +392,7 @@ const en: T = {
     title: "About the speaker.",
     bullets: [
       {
-        t: "Adjunct Lecturer & Researcher",
+        t: "Post-Doctoral Researcher",
         b: "at the Networks, Media and Systems Security Lab (NMSLab), Dept. of Informatics, Ionian University.",
       },
       {
