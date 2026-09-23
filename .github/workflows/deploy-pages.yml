@@ -39,6 +39,30 @@ jobs:
         with:
           enablement: true
 
+      - name: Diagnose Pages API (on failure)
+        if: failure()
+        run: |
+          {
+            echo "== GET /pages =="
+            curl -s -H "Authorization: Bearer $GITHUB_TOKEN" "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/pages"
+            echo
+            echo "== POST /pages build_type=workflow =="
+            curl -s -X POST -H "Authorization: Bearer $GITHUB_TOKEN" \
+              -H "Content-Type: application/json" -H "Accept: application/vnd.github+json" \
+              -d '{"build_type":"workflow"}' "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/pages"
+            echo
+          } > diag.txt
+          cat diag.txt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload diagnostic
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: diag
+          path: diag.txt
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
