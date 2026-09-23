@@ -2527,7 +2527,7 @@ function Slide31({ t, lang }: { t: T; lang: Lang }) {
             <ContactRow
               icon={<Mail className="w-4 h-4" />}
               label={t.thanks.emailLabel}
-              value="karagiannis@ionio.gr"
+              value="skaragiannis@ionio.gr"
             />
           </div>
           <div className="flex flex-wrap gap-3">
