@@ -334,7 +334,7 @@ export default function App() {
         // ignore storage errors
       }
     }
-    return "classic";
+    return "mono";
   });
   const [slide, setSlide] = useState(0);
   const [showIntro, setShowIntro] = useState(true);

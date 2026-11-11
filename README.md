@@ -8,7 +8,7 @@ Built with React + Vite + Tailwind CSS and compiled to **one self-contained `ind
 
 ## ✨ Features
 
-- **Theme Swapping (Classic ↔ Mono)** — switch with one click (or press `T`). Includes the warm Classic editorial theme and a crisp Mono theme (pure white background, bold black letters, bold black buttons, figures and illustrations preserved in their original colors).
+- **Theme Swapping (Mono ↔ Classic)** — switch with one click (or press `T`). Mono is the default. Includes the warm Classic editorial theme and a crisp Mono theme (pure white background, bold black letters, bold black buttons, figures and illustrations preserved in their original colors).
 - **Bilingual** — full EN / EL translations with a one-click toggle (or press `G`).
 - **Research Typography** — IBM Plex superfamily (`IBM Plex Sans`, `IBM Plex Serif`, `IBM Plex Mono`) with a 100% self-contained offline system stack (no external font tracking or network links).
 - **Single-file build** — `vite-plugin-singlefile` inlines everything into `dist/index.html` and automatically copies to `html/index.html` (and `/html/index.html`); no external assets required.
